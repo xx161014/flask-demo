@@ -1,8 +1,9 @@
 # This is a basic workflow to help you get started with Actions
-
+# 项目名称
 name: CI
 
 # Controls when the workflow will run
+# 触发条件
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -14,25 +15,31 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# 作业
 jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
+    # runner使用镜像
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
+    # 作业步骤
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
+
+      # 灯笼裤docker仓库
       - name: Docker Login
         uses: docker/login-action@v1.10.0
-        with:
+        with: # 提供参数，这里是docker仓库登录的参数，调用仓库secret中配置的秘钥
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
+          # 作业完成后自动退出仓库登录
           logout: true
 
       # Runs a set of commands using the runners shell
+      # 构建镜像的作业
       - name: build image
         run: |
           make image
@@ -48,6 +55,7 @@ jobs:
           ci-user: pyfs
           ci-user-token: ${{ secrets.CI_TOKEN }}
           ci-name: CI
+          # ci-inputs:将内容传递给下一个作业
           ci-inputs: >-
             image=${{ secrets.USERNAME }}/flask-demo
             sha-tag=${{ github.sha }}
